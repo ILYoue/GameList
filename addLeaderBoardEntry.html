@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Leaderboard Entry</title>
+
+    <style>
+        .addEntry-form
+    {
+        font-family: sans-serif;
+        width: fit-content;
+        margin: auto;
+        background: white;
+        border-radius: 10px;
+        padding: 20px 115px 100px 115px;
+        box-shadow: 0 1px 6px 0 #20212447;
+        margin-top: 150px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    body{
+        background: orange;
+    }
+    button{
+        margin-top: 20px;
+        background: gold;
+        padding: 10px 15px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 18px;
+        display: inline;
+        border: none;
+        cursor: pointer;
+    }
+    .margin-20
+    {
+        margin-top: 20px;
+    }
+    .flex
+        {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="flex">
+        <a href="home.html">Game List</a>
+        <a href="addGame.html">Add Game</a>
+    </div>
+
+    <div class="addEntry-form">
+
+    <h2>Add Leaderboard Entry</h2>
+
+    <form id="addEntryForm">
+        <div>
+            <div>
+                <label for="playerName">Player Name:</label>
+            </div>
+        <input type="text" id="playerName" name="playerName" required>
+        </div>
+
+        <div class="margin-20">
+            <div>
+                <label for="score">Score:</label>
+            </div>
+        <input type="number" id="score" name="score">
+        </div>
+
+        <div class="margin-20">
+            <div>
+                <label for="time">Time:</label>
+            </div>
+        <input type="text" id="time" name="time" placeholder="hh:mm:ss:ms" required>
+        </div>
+
+        <button type="button" onclick="addLeaderboardEntry()">Add Entry</button>
+    </form>
+    </div>
+
+    <script>
+        function addLeaderboardEntry() {
+            var playerName = document.getElementById('playerName').value.trim();
+            var score = document.getElementById('score').value;
+            var time = document.getElementById('time').value.trim();
+
+            // Validate input
+            if (!playerName || !time) {
+                alert('Please fill in Player Name and Time fields.');
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            var gameId = urlParams.get('id');
+    
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://lime-faithful-hippo.cyclic.app/api/leaderboard/' + gameId, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        alert('Leaderboard entry added successfully!');
+                        window.location.href = 'leaderboard.html?id=' + gameId;
+                    } else {
+                        var error = JSON.parse(xhr.responseText);
+                        alert('Failed to add leaderboard entry. Error: ' + error.message);
+                    }
+                }
+            };
+
+            xhr.send(JSON.stringify({
+                gameID:gameId,
+                player: playerName,
+                score: score,
+                time: time
+            }));
+        }
+
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game List</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+        }
+        th {
+            background-color: #eee;
+            padding: 10px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            color: #444;
+        }
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+            cursor: pointer;
+        }
+        a {
+            background: gold;
+            padding: 10px 15px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            display: inline;
+            float: right;
+        }
+        tr:hover {
+            background-color: #f2f2f2;
+        }
+        h2 {
+            display: inline;
+        }
+        .flex {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .add-game-button {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex">
+        <a href="home.html">Game List</a>
+        <a href="addGame.html">Add Game</a>
+    </div>
+    <div class="home-heading">
+        <h2>Game List</h2>
+    </div>
+    <div id="gameTableContainer"></div>
+    <div class="add-game-button">
+        <a href="addGame.html">Add Game</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchGames();
+        });
+
+        function fetchGames() {
+            fetch('https://lime-faithful-hippo.cyclic.app/api/games')
+                .then(response => response.json())
+                .then(data => createTable(data))
+                .catch(error => alert('Failed to fetch games. Error: ' + error));
+        }
+
+        function createTable(data) {
+            var tableContainer = document.getElementById('gameTableContainer');
+            var table = document.createElement('table');
+
+            var headerRow = table.insertRow();
+            ['Game Name', 'Platform'].forEach(function (headerText) {
+                var th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+
+            data.forEach(function (item) {
+                var row = table.insertRow();
+                ['GameName', 'Platform'].forEach(function (prop) {
+                    var cell = row.insertCell();
+                    cell.textContent = item[prop];
+                });
+
+                row.addEventListener('click', function () {
+                    window.location.href = 'leaderboard.html?id=' + item.id;
+                });
+            });
+
+            tableContainer.appendChild(table);
+        }
+    </script>
+</body>
+</html>
